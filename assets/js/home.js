@@ -53,7 +53,7 @@
     if (!el) return;
     var cycles = [];
     el.innerHTML = store.ORDER.map(function (type, i) {
-      var t = store.TYPES[type], n = d ? d.byType[type] || 0 : null, media = store.typeIcon(type);
+      var t = store.TYPES[type], media = store.typeIcon(type);
       if (d && CYCLE[type]) {
         var srcs = mixed(d.products.filter(function (p) { return p.type === type; }))
           .map(function (p) { return store.pick(p, ["front"]).src; });
@@ -64,8 +64,7 @@
       }
       return '<a class="cat" href="shop.html?type=' + type + '" style="--n:' + i + '">' +
         '<div class="cat__img">' + media + "</div>" +
-        '<div class="cat__label"><span class="cat__name">' + t.many + "</span>" +
-        (n != null ? '<span class="cat__count">' + n + (n === 1 ? " design" : " designs") + "</span>" : "") + "</div>" +
+        '<div class="cat__label"><span class="cat__name">' + t.many + "</span></div>" +
         '<p class="cat__blurb">' + SC.esc(t.blurb) + "</p></a>";
     }).join("");
     SC.fadeImages(el);
