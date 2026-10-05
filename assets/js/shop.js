@@ -8,15 +8,26 @@
   var state = { type: TYPES[q.get("type")] ? q.get("type") : "all", q: q.get("q") || "", place: q.get("place") || "", sort: q.get("sort") || "featured" };
   var data = null;
 
-  // Heading follows the type in the URL; set before the headline is split into lines.
+  var defaultTitle = $("[data-shop-title]").innerHTML, defaultLede = $("[data-shop-lede]").textContent;
+  var headingType = null;
+
+  // Heading follows the selected type, including switches within the shop.
   function heading() {
+    if (headingType === state.type) return;
+    headingType = state.type;
     var title = $("[data-shop-title]"), lede = $("[data-shop-lede]");
     if (state.type !== "all") {
       var t = TYPES[state.type];
       title.innerHTML = SC.esc(t.many) + " <em>from the road.</em>";
       lede.textContent = t.blurb + " Each one made from an original photograph.";
       document.title = t.many + " | Shorecrest";
+    } else {
+      title.innerHTML = defaultTitle;
+      lede.textContent = defaultLede;
+      document.title = "Shop | Shorecrest";
     }
+    title._src = title.innerHTML;
+    if (title.classList.contains("is-split")) SC.split(title);
   }
   heading();
 
@@ -77,6 +88,7 @@
   }
 
   function apply(animate) {
+    heading();
     var list = filtered(), grid = $("[data-grid]");
     var label = state.type === "all" ? "pieces" : TYPES[state.type].many.toLowerCase();
     $("[data-status]").textContent = list.length + " " + (list.length === 1 && state.type === "all" ? "piece" : label);

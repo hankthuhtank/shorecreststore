@@ -157,17 +157,16 @@
       p.collection = info.collection || (p.scene ? p.scene.place : "");
       p.colors = colorCount(p);
     });
-    // Canvas + Framed canvas of the same photograph become one design with a Style choice;
-    // logo variations of the same tee or cap become one product with a Logo choice.
+    // Canvas + Framed canvas of the same photograph become one design with a Style choice.
+    // Each apparel and hat logo gets its own card and product link.
     var labels = cfg.variationLabels || {};
     group(all.filter(function (p) { return p.type === "canvas"; }),
       function (p) { return (p.place + "|" + p.name).toLowerCase(); },
       function (a, b) { return (a.kind === "Framed canvas") - (b.kind === "Framed canvas") || a.priceMin - b.priceMin; },
       function (p) { return labels[p.id] || (p.kind === "Framed canvas" ? "Framed" : "Canvas"); }, "Style");
-    group(all.filter(function (p) { return p.type === "shirts" || p.type === "hats"; }),
-      function (p) { return (p.type + "|" + p.name).toLowerCase(); },
-      function (a, b) { return a.copy - b.copy || a.rank - b.rank; },
-      function (p, i) { return labels[p.id] || "Logo " + (i + 1); }, "Logo");
+    all.forEach(function (p) {
+      if ((p.type === "shirts" || p.type === "hats") && labels[p.id]) p.name += " — " + labels[p.id];
+    });
     d.all = all;
     d.products = all.filter(function (p) { return !p.secondary; });
     d.byId = {};
@@ -258,6 +257,14 @@
     var list = d.products.filter(function (p) { return p.type === type; });
     if (!list.length) return null;
     var p = list[0];
+    if (type === "hats") {
+      p = list.filter(function (p) { return cfg.variationLabels[p.id] === "Wordmark"; })[0] || p;
+      var grey = p.variants.filter(function (v) { return /Heather Gr[ae]y/.test(v.title); })[0];
+      if (grey) {
+        var front = store.imagesFor(p, grey.id).filter(function (im) { return im.position === "front"; })[0];
+        if (front) return front.src;
+      }
+    }
     return store.pick(p, TILE[type] || ["front"]).src;
   };
   var filled = false;
