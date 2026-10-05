@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en" data-default-header="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Off the map | Shorecrest</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#192928">
+  <base href="/">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="preload" href="assets/fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body class="dark">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="hdr" data-theme="dark">
+    <a class="hdr__brand" href="index.html" aria-label="Shorecrest home" data-logo><img src="assets/brand/logo-cloud.svg" alt="Shorecrest" width="186" height="70"></a>
+    <nav class="hdr__nav" aria-label="Primary">
+      <a href="shop.html">Shop</a>
+      <a href="story.html">Our story</a>
+      <a href="faq.html">Help</a>
+    </nav>
+    <div class="hdr__tools"><a class="btn btn--sm" href="shop.html">Shop all</a></div>
+  </header>
+  <main id="main" class="lost" data-header="dark">
+    <div class="lost__bg"><img src="assets/img/photo/SC-049-1600.webp" alt="" fetchpriority="high"></div>
+    <div class="wrap">
+      <svg class="compass" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="44" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="50" cy="50" r="36" fill="none" stroke="currentColor" stroke-width=".8" stroke-dasharray="1 5"/>
+        <g class="needle"><path d="M50 14L56 50L50 86L44 50Z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M50 14L56 50H44Z" fill="currentColor"/></g>
+      </svg>
+      <h1 class="h1">Off the <em>map.</em></h1>
+      <p>This trail doesn't go anywhere. Let's get you back to somewhere with a view.</p>
+      <div class="hero__ctas">
+        <a class="btn btn--light" href="shop.html">Browse the shop</a>
+        <a class="link" href="index.html">Back to the start</a>
+      </div>
+    </div>
+  </main>
+  <script src="assets/js/logo-data.js"></script>
+  <script>
+    (function () {
+      var L = window.SC_LOGO, el = document.querySelector("[data-logo]");
+      if (L && el) el.innerHTML = '<svg viewBox="' + L.viewBox + '" role="img" aria-label="Shorecrest"><path class="logo-a" fill-rule="evenodd" d="' + L.tide + '"/><path class="logo-b" fill-rule="evenodd" d="' + L.pine + '"/></svg>';
+    })();
+  </script>
+</body>
+</html>
