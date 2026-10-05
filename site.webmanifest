@@ -1,0 +1,13 @@
+{
+  "name": "Shorecrest",
+  "short_name": "Shorecrest",
+  "description": "Original photographs from 45 days on the road. There's more out there.",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#21463A",
+  "background_color": "#192928",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
