@@ -156,6 +156,11 @@
       p.place = info.place || (p.scene ? COLLECTION_PLACE[p.scene.place] || p.scene.place : "");
       p.collection = info.collection || (p.scene ? p.scene.place : "");
       p.colors = colorCount(p);
+      if (p.id === "6ac253e45c3583a0380de97f") {
+        var green = p.variants.filter(function (v) { return /Heather Military Green/i.test(v.title); })[0];
+        var front = green && p.images.filter(function (im) { return im.position === "front-2" && im.variants && im.variants.indexOf(green.id) > -1; })[0];
+        if (front) { p.images.splice(p.images.indexOf(front), 1); p.images.unshift(front); }
+      }
     });
     // Canvas + Framed canvas of the same photograph become one design with a Style choice.
     // Each apparel and hat logo gets its own card and product link.
