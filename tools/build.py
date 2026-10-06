@@ -31,7 +31,7 @@ CACHE_FILE = TOOLS / ".build-cache.json"
 
 WIDTHS = [480, 960, 1600]
 LARGE = {"SC-019", "SC-058", "SC-061", "SC-025"}   # photos shown full screen get a 2400px size too
-FEATURED_ORDER = ["SC-003", "SC-004", "SC-019", "SC-031", "SC-035", "SC-025",
+FEATURED_ORDER = ["SC-003", "SC-004", "SC-019", "SC-031", "SC-035", "SC-028",
                   "SC-058", "SC-045", "SC-010", "SC-022", "SC-061", "SC-063"]
 
 
@@ -286,4 +286,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
