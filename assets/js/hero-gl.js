@@ -6,7 +6,8 @@
   "use strict";
   var SC = (window.SC = window.SC || {});
 
-  var VS = "attribute vec2 p;varying vec2 v;void main(){v=vec2(p.x*.5+.5,.5-p.y*.5);gl_Position=vec4(p,0.,1.);}";
+  var VS =
+    "attribute vec2 p;varying vec2 v;void main(){v=vec2(p.x*.5+.5,.5-p.y*.5);gl_Position=vec4(p,0.,1.);}";
   var FS = [
     "precision highp float;",
     "varying vec2 v;",
@@ -40,14 +41,17 @@
     "  col=mix(col,col*vec3(.9,.97,1.)+vec3(0.,.008,.014),grade);",
     "  vec2 q=v-.5;col*=1.-dot(q,q)*.6*grade;",
     "  gl_FragColor=vec4(col,1.);",
-    "}"
+    "}",
   ].join("\n");
 
   function compile(gl, type, src) {
     var s = gl.createShader(type);
     gl.shaderSource(s, src);
     gl.compileShader(s);
-    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.warn(gl.getShaderInfoLog(s)); return null; }
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+      console.warn(gl.getShaderInfoLog(s));
+      return null;
+    }
     return s;
   }
 
@@ -55,19 +59,35 @@
   SC.heroWater = function (canvas, img, opts) {
     opts = opts || {};
     var gl;
-    try { gl = canvas.getContext("webgl", { antialias: false, alpha: false, preserveDrawingBuffer: false, powerPreference: "high-performance" }); } catch (e) { gl = null; }
+    try {
+      gl = canvas.getContext("webgl", {
+        antialias: false,
+        alpha: false,
+        preserveDrawingBuffer: false,
+        powerPreference: "high-performance",
+      });
+    } catch (e) {
+      gl = null;
+    }
     if (!gl) return null;
 
-    var vs = compile(gl, gl.VERTEX_SHADER, VS), fs = compile(gl, gl.FRAGMENT_SHADER, FS);
+    var vs = compile(gl, gl.VERTEX_SHADER, VS),
+      fs = compile(gl, gl.FRAGMENT_SHADER, FS);
     if (!vs || !fs) return null;
     var prog = gl.createProgram();
-    gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.linkProgram(prog);
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
     gl.useProgram(prog);
 
     var buf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
+      gl.STATIC_DRAW,
+    );
     var loc = gl.getAttribLocation(prog, "p");
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
@@ -86,7 +106,9 @@
     if (gl.getError() !== gl.NO_ERROR) return null;
 
     var U = {};
-    ["tex", "res", "isz", "focus", "time", "hz", "zoom", "grade", "rip"].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+    ["tex", "res", "isz", "focus", "time", "hz", "zoom", "grade", "rip"].forEach(function (n) {
+      U[n] = gl.getUniformLocation(prog, n);
+    });
     gl.uniform1i(U.tex, 0);
     gl.uniform2f(U.isz, img.naturalWidth, img.naturalHeight);
     var focus = opts.focus || [0.5, 0.55];
@@ -94,45 +116,80 @@
     gl.uniform1f(U.hz, opts.horizon || 0.556);
     gl.uniform1f(U.grade, opts.grade == null ? 1 : opts.grade);
 
-    var ripples = new Float32Array(24), ri = 0, t0 = performance.now(), zoom = 1, running = true, w = 0, h = 0;
+    var ripples = new Float32Array(24),
+      ri = 0,
+      t0 = performance.now(),
+      zoom = 1,
+      running = true,
+      w = 0,
+      h = 0;
     var dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 800 ? 1.5 : 1.75);
 
     function size() {
-      var cw = canvas.clientWidth, ch = canvas.clientHeight;
+      var cw = canvas.clientWidth,
+        ch = canvas.clientHeight;
       if (!cw || !ch) return;
       if (cw * dpr !== w || ch * dpr !== h) {
-        w = Math.round(cw * dpr); h = Math.round(ch * dpr);
-        canvas.width = w; canvas.height = h;
+        w = Math.round(cw * dpr);
+        h = Math.round(ch * dpr);
+        canvas.width = w;
+        canvas.height = h;
         gl.viewport(0, 0, w, h);
         gl.uniform2f(U.res, w, h);
       }
     }
-    function now() { return (performance.now() - t0) / 1000; }
+    function now() {
+      return (performance.now() - t0) / 1000;
+    }
 
     function toImage(cx, cy) {
       var r = canvas.getBoundingClientRect();
-      var u = (cx - r.left) / r.width, vv = (cy - r.top) / r.height;
-      u = (u - 0.5) / zoom + 0.5; vv = (vv - 0.5) / zoom + 0.5;
-      var rs = r.width / r.height, ri2 = img.naturalWidth / img.naturalHeight;
-      var sx = rs > ri2 ? 1 : rs / ri2, sy = rs > ri2 ? ri2 / rs : 1;
+      var u = (cx - r.left) / r.width,
+        vv = (cy - r.top) / r.height;
+      u = (u - 0.5) / zoom + 0.5;
+      vv = (vv - 0.5) / zoom + 0.5;
+      var rs = r.width / r.height,
+        ri2 = img.naturalWidth / img.naturalHeight;
+      var sx = rs > ri2 ? 1 : rs / ri2,
+        sy = rs > ri2 ? ri2 / rs : 1;
       return [u * sx + (1 - sx) * focus[0], vv * sy + (1 - sy) * focus[1]];
     }
     function addRipple(cx, cy, strength) {
       var p = toImage(cx, cy);
       if (p[1] < (opts.horizon || 0.556)) return;
-      ripples[ri * 4] = p[0]; ripples[ri * 4 + 1] = p[1]; ripples[ri * 4 + 2] = now(); ripples[ri * 4 + 3] = strength;
+      ripples[ri * 4] = p[0];
+      ripples[ri * 4 + 1] = p[1];
+      ripples[ri * 4 + 2] = now();
+      ripples[ri * 4 + 3] = strength;
       ri = (ri + 1) % 6;
     }
 
-    var lastX = 0, lastY = 0, lastT = 0, hit = opts.hitArea || canvas;
-    hit.addEventListener("pointermove", function (e) {
-      var t = performance.now(), dx = e.clientX - lastX, dy = e.clientY - lastY;
-      if (t - lastT > 110 && dx * dx + dy * dy > 500) {
-        addRipple(e.clientX, e.clientY, e.pointerType === "mouse" ? 0.7 : 1);
-        lastX = e.clientX; lastY = e.clientY; lastT = t;
-      }
-    }, { passive: true });
-    hit.addEventListener("pointerdown", function (e) { addRipple(e.clientX, e.clientY, 1.4); }, { passive: true });
+    var lastX = 0,
+      lastY = 0,
+      lastT = 0,
+      hit = opts.hitArea || canvas;
+    hit.addEventListener(
+      "pointermove",
+      function (e) {
+        var t = performance.now(),
+          dx = e.clientX - lastX,
+          dy = e.clientY - lastY;
+        if (t - lastT > 110 && dx * dx + dy * dy > 500) {
+          addRipple(e.clientX, e.clientY, e.pointerType === "mouse" ? 0.7 : 1);
+          lastX = e.clientX;
+          lastY = e.clientY;
+          lastT = t;
+        }
+      },
+      { passive: true },
+    );
+    hit.addEventListener(
+      "pointerdown",
+      function (e) {
+        addRipple(e.clientX, e.clientY, 1.4);
+      },
+      { passive: true },
+    );
 
     function draw() {
       if (!running) return;
@@ -154,10 +211,19 @@
     }, 1800);
 
     return {
-      setZoom: function (z) { zoom = z; },
-      pause: function () { running = false; },
-      play: function () { running = true; },
-      destroy: function () { running = false; stopLoop(); }
+      setZoom: function (z) {
+        zoom = z;
+      },
+      pause: function () {
+        running = false;
+      },
+      play: function () {
+        running = true;
+      },
+      destroy: function () {
+        running = false;
+        stopLoop();
+      },
     };
   };
 })();
